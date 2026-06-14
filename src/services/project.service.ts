@@ -8,8 +8,8 @@ import {
 import { UserRolesEnum, type UserRole } from "../utils/constants.js";
 
 export class ProjectService {
-  async getUserProjects(userId: string) {
-    return projectRepository.findUserProjects(userId);
+  async getUserProjects(userId: string, page: number, limit: number) {
+    return projectRepository.findUserProjectsPaginated(userId, page, limit);
   }
 
   async getProjectById(userId: string, projectId: string) {

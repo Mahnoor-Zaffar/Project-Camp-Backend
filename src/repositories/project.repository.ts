@@ -41,6 +41,31 @@ export class ProjectRepository {
     return Project.findByIdAndDelete(projectId);
   }
 
+  async findUserProjectsPaginated(userId: string, page: number, limit: number) {
+    const skip = (page - 1) * limit;
+    const pipeline = [
+      { $match: { user: new mongoose.Types.ObjectId(userId) } },
+      { $lookup: { from: "projects", localField: "project", foreignField: "_id", as: "project" } },
+      { $unwind: "$project" },
+      { $lookup: { from: "projectmembers", localField: "project._id", foreignField: "project", as: "members" } },
+      { $addFields: { "project.members": { $size: "$members" } } },
+      {
+        $project: {
+          project: { _id: "$project._id", name: "$project.name", description: "$project.description", members: "$project.members", createdAt: "$project.createdAt", createdBy: "$project.createdBy" },
+          role: 1,
+          _id: 0,
+        },
+      },
+    ];
+
+    const [data, totalArr] = await Promise.all([
+      ProjectMember.aggregate([...pipeline, { $skip: skip }, { $limit: limit }]),
+      ProjectMember.aggregate([...pipeline, { $count: "total" }]),
+    ]);
+    const total = (totalArr[0] as { total?: number } | undefined)?.total ?? 0;
+    return { projects: data, total, page, totalPages: Math.ceil(total / limit) };
+  }
+
   findUserProjects(userId: string) {
     return ProjectMember.aggregate([
       {

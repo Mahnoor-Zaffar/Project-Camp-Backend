@@ -5,13 +5,20 @@ import { asyncHandler } from "../utils/async-handler.js";
 import { getRouteParam } from "../utils/params.js";
 
 export const getTasks = asyncHandler(async (req: Request, res: Response) => {
-  const tasks = await taskService.listTasks(
+  const page = Number(req.query.page ?? 1);
+  const limit = Number(req.query.limit ?? 10);
+  const filters = {
+    status: req.query.status as string | undefined,
+    assignedTo: req.query.assignedTo as string | undefined,
+  };
+  const result = await taskService.listTasks(
     req.user!._id.toString(),
     getRouteParam(req.params.projectId),
+    page,
+    limit,
+    filters,
   );
-  res
-    .status(200)
-    .json(new ApiResponse(200, tasks, "Tasks fetched successfully"));
+  res.status(200).json(new ApiResponse(200, result, "Tasks fetched successfully"));
 });
 
 export const createTask = asyncHandler(async (req: Request, res: Response) => {

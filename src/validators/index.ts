@@ -86,6 +86,18 @@ export const createNoteSchema = z.object({
 
 export const updateNoteSchema = createNoteSchema.partial();
 
+export const paginationSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+});
+
+export const taskQuerySchema = paginationSchema.extend({
+  status: z
+    .enum(AvailableTaskStatuses as [string, ...string[]])
+    .optional(),
+  assignedTo: z.string().optional(),
+});
+
 export const projectIdParamSchema = z.object({
   projectId: z.string().min(1),
 });

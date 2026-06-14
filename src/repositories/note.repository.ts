@@ -2,6 +2,20 @@ import mongoose from "mongoose";
 import { ProjectNote } from "../models/note.model.js";
 
 export class NoteRepository {
+  async findByProjectPaginated(projectId: string, page: number, limit: number) {
+    const query = { project: new mongoose.Types.ObjectId(projectId) };
+    const skip = (page - 1) * limit;
+    const [notes, total] = await Promise.all([
+      ProjectNote.find(query)
+        .populate("createdBy", "avatar username fullName email")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      ProjectNote.countDocuments(query),
+    ]);
+    return { notes, total, page, totalPages: Math.ceil(total / limit) };
+  }
+
   findByProject(projectId: string) {
     return ProjectNote.find({
       project: new mongoose.Types.ObjectId(projectId),

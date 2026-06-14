@@ -5,12 +5,10 @@ import { asyncHandler } from "../utils/async-handler.js";
 import { getRouteParam } from "../utils/params.js";
 
 export const getProjects = asyncHandler(async (req: Request, res: Response) => {
-  const projects = await projectService.getUserProjects(
-    req.user!._id.toString(),
-  );
-  res
-    .status(200)
-    .json(new ApiResponse(200, projects, "Projects fetched successfully"));
+  const page = Number(req.query.page ?? 1);
+  const limit = Number(req.query.limit ?? 10);
+  const result = await projectService.getUserProjects(req.user!._id.toString(), page, limit);
+  res.status(200).json(new ApiResponse(200, result, "Projects fetched successfully"));
 });
 
 export const createProject = asyncHandler(

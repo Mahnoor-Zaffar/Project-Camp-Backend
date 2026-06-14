@@ -45,7 +45,8 @@ export const sendEmail = async (options: SendEmailOptions): Promise<void> => {
       html: mailGenerator.generate(options.mailgenContent),
     });
   } catch (error) {
-    console.error("Email service failed:", error);
+    const { logger } = await import("./logger.js");
+    logger.error({ err: error }, "Email service failed");
   }
 };
 
