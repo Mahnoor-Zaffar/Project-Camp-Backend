@@ -178,3 +178,42 @@ Project Camp Backend is a RESTful API service designed to support collaborative 
 - File attachment capability for enhanced collaboration
 - Email notification system for user verification and password reset
 - Comprehensive API documentation through endpoint structure
+
+
+
+## Tech Stack
+Here's the current tech stack:
+
+#### Language & Runtime
+- TypeScript 5.7 (strict mode) — compiled via tsc, run with tsx in dev
+- Node.js (ESM modules — "type": "module")
+#### Framework
+- Express.js v5
+#### Database
+- MongoDB via Mongoose v8
+#### Authentication & Security
+- jsonwebtoken — JWT access + refresh tokens
+- bcrypt — password hashing
+- helmet — secure HTTP headers
+- cors — cross-origin resource sharing
+- express-rate-limit — rate limiting
+- cookie-parser — cookie handling
+#### Validation
+- zod — schema validation for all inputs + environment variables
+#### File Uploads
+- multer — disk storage with MIME type + size validation
+#### Email
+- nodemailer + mailgen — templated transactional emails (Mailtrap for dev)
+#### Logging
+- pino + pino-http — structured JSON logging (pretty in dev)
+#### API Documentation
+- swagger-ui-express — serves the OpenAPI 3.0 spec at /api-docs
+#### Testing
+- vitest + supertest + mongodb-memory-server
+#### DevTools
+- tsx — dev server with watch mode
+- pino-pretty — pretty-prints logs in development
+- prettier — code formatting
+#### Infrastructure
+- Docker (multi-stage Dockerfile + docker-compose)
+- GitHub Actions CI
