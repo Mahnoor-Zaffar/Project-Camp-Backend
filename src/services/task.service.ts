@@ -1,3 +1,8 @@
+// Express.Multer.File is declared globally by @types/multer
+type MulterFile = Express.Multer.File;
+import { env } from "../config/env.js";
+import { projectRepository } from "../repositories/project.repository.js";
+import { taskRepository } from "../repositories/task.repository.js";
 import type { ITaskAttachment } from "../models/task.model.js";
 import {
   BadRequestError,
@@ -48,7 +53,7 @@ export class TaskService {
     return tasks[0];
   }
 
-  buildAttachments(files: Express.Multer.File[]): ITaskAttachment[] {
+  buildAttachments(files: MulterFile[]): ITaskAttachment[] {
     return files.map((file) => ({
       url: `${env.SERVER_URL}/images/${file.filename}`,
       mimetype: file.mimetype,
@@ -65,7 +70,7 @@ export class TaskService {
       assignedTo?: string;
       status?: TaskStatus;
     },
-    files: Express.Multer.File[] = [],
+    files: MulterFile[] = [],
   ) {
     const project = await projectRepository.findById(projectId);
     if (!project) {
@@ -99,7 +104,7 @@ export class TaskService {
       assignedTo?: string;
       status?: TaskStatus;
     },
-    files: Express.Multer.File[] = [],
+    files: MulterFile[] = [],
   ) {
     const existing = await this.ensureTaskInProject(taskId, projectId);
 

@@ -98,12 +98,12 @@ userSchema.methods.generateTemporaryToken = function () {
 export const User = mongoose.model<IUser, UserModel>("User", userSchema);
 
 export const sanitizeUser = (user: IUserDocument) => {
-  const obj = user.toObject();
-  delete (obj as Record<string, unknown>).password;
-  delete (obj as Record<string, unknown>).refreshToken;
-  delete (obj as Record<string, unknown>).emailVerificationToken;
-  delete (obj as Record<string, unknown>).emailVerificationExpiry;
-  delete (obj as Record<string, unknown>).forgotPasswordToken;
-  delete (obj as Record<string, unknown>).forgotPasswordExpiry;
+  const obj = user.toObject() as unknown as Record<string, unknown>;
+  delete obj.password;
+  delete obj.refreshToken;
+  delete obj.emailVerificationToken;
+  delete obj.emailVerificationExpiry;
+  delete obj.forgotPasswordToken;
+  delete obj.forgotPasswordExpiry;
   return obj;
 };
