@@ -9,10 +9,12 @@ import {
   register,
   resendEmailVerification,
   resetPassword,
+  updateAvatar,
   verifyEmail,
 } from "../controllers/auth.controller.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
 import {
   changePasswordSchema,
   forgotPasswordSchema,
@@ -42,6 +44,7 @@ router.post(
 );
 
 router.post("/logout", verifyToken, logout);
+router.patch("/avatar", verifyToken, upload.single("avatar"), updateAvatar);
 router.get("/current-user", verifyToken, getCurrentUser);
 router.post(
   "/change-password",

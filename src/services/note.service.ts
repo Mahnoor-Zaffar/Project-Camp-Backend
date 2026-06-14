@@ -3,12 +3,12 @@ import { projectRepository } from "../repositories/project.repository.js";
 import { NotFoundError } from "../utils/errors.js";
 
 export class NoteService {
-  async listNotes(userId: string, projectId: string) {
+  async listNotes(userId: string, projectId: string, page: number, limit: number) {
     const membership = await projectRepository.findMembership(userId, projectId);
     if (!membership) {
       throw new NotFoundError("Project not found or access denied");
     }
-    return noteRepository.findByProject(projectId);
+    return noteRepository.findByProjectPaginated(projectId, page, limit);
   }
 
   async getNote(userId: string, projectId: string, noteId: string) {

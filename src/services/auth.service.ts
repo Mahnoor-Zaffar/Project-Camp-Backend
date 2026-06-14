@@ -6,6 +6,7 @@ import {
   forgotPasswordMailgenContent,
   sendEmail,
 } from "../utils/mail.js";
+import { User } from "../models/user.model.js";
 import {
   AppError,
   BadRequestError,
@@ -211,6 +212,20 @@ export class AuthService {
 
   getCurrentUser(userId: string) {
     return userRepository.findByIdSafe(userId);
+  }
+
+  async updateAvatar(userId: string, file: Express.Multer.File, serverUrl: string) {
+    const url = `${serverUrl}/images/${file.filename}`;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { avatar: { url, localPath: file.path } },
+      { new: true },
+    ).select("-password -refreshToken -emailVerificationToken -emailVerificationExpiry -forgotPasswordToken -forgotPasswordExpiry");
+
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    return user;
   }
 }
 

@@ -5,13 +5,15 @@ import { asyncHandler } from "../utils/async-handler.js";
 import { getRouteParam } from "../utils/params.js";
 
 export const getNotes = asyncHandler(async (req: Request, res: Response) => {
-  const notes = await noteService.listNotes(
+  const page = Number(req.query.page ?? 1);
+  const limit = Number(req.query.limit ?? 10);
+  const result = await noteService.listNotes(
     req.user!._id.toString(),
     getRouteParam(req.params.projectId),
+    page,
+    limit,
   );
-  res
-    .status(200)
-    .json(new ApiResponse(200, notes, "Notes fetched successfully"));
+  res.status(200).json(new ApiResponse(200, result, "Notes fetched successfully"));
 });
 
 export const createNote = asyncHandler(async (req: Request, res: Response) => {

@@ -34,13 +34,19 @@ export class TaskService {
     return subtask;
   }
 
-  async listTasks(userId: string, projectId: string) {
+  async listTasks(
+    userId: string,
+    projectId: string,
+    page: number,
+    limit: number,
+    filters: { status?: string; assignedTo?: string },
+  ) {
     await projectRepository.findMembership(userId, projectId);
     const project = await projectRepository.findById(projectId);
     if (!project) {
       throw new NotFoundError("Project not found");
     }
-    return taskRepository.findByProject(projectId);
+    return taskRepository.findByProjectPaginated(projectId, page, limit, filters);
   }
 
   async getTask(userId: string, projectId: string, taskId: string) {

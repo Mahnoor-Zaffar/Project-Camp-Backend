@@ -1,9 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import mongoose from "mongoose";
-import { env } from "../config/env.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { AppError } from "../utils/errors.js";
+import { logger } from "../utils/logger.js";
 
 export const notFoundHandler = (
   _req: Request,
@@ -40,8 +40,8 @@ export const errorHandler = (
     message = `Invalid ${err.path}: ${err.value}`;
   }
 
-  if (env.NODE_ENV === "development" && statusCode === 500) {
-    console.error(err);
+  if (statusCode === 500) {
+    logger.error({ err }, "Unhandled server error");
   }
 
   res.status(statusCode).json(new ApiResponse(statusCode, { errors }, message));

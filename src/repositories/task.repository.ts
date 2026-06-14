@@ -3,6 +3,30 @@ import { Task, type ITaskAttachment } from "../models/task.model.js";
 import { Subtask } from "../models/subtask.model.js";
 
 export class TaskRepository {
+  async findByProjectPaginated(
+    projectId: string,
+    page: number,
+    limit: number,
+    filters: { status?: string; assignedTo?: string },
+  ) {
+    const query: Record<string, unknown> = {
+      project: new mongoose.Types.ObjectId(projectId),
+    };
+    if (filters.status) query.status = filters.status;
+    if (filters.assignedTo) query.assignedTo = new mongoose.Types.ObjectId(filters.assignedTo);
+
+    const skip = (page - 1) * limit;
+    const [tasks, total] = await Promise.all([
+      Task.find(query)
+        .populate("assignedTo", "avatar username fullName email")
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Task.countDocuments(query),
+    ]);
+    return { tasks, total, page, totalPages: Math.ceil(total / limit) };
+  }
+
   findByProject(projectId: string) {
     return Task.find({
       project: new mongoose.Types.ObjectId(projectId),
